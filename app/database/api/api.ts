@@ -1,4 +1,4 @@
-import { Category, List, Item } from "../database";
+import { List, Item } from "../database";
 import { db } from "../database";
 
 const databaseAPI = {
@@ -46,13 +46,21 @@ const databaseAPI = {
   // Retrieves all items for a target list
   getAllItemsForList: (listId: string) => {
     // return the query to that you can use it in useLiveQuery
-    return db.items.where("list_id").equals(listId);
+    return db.items.where("list_id").equals(listId).toArray();
+  },
+  getAllCheckedListItems: (listId: string) => {
+    // return the query to that you can use it in useLiveQuery
+    return db.items
+      .where("list_id")
+      .equals(listId)
+      .and((item) => item.checked == true)
+      .toArray();
   },
 
   // Update a specific list
   updateItem: async (itemId: string, updatedItem: Partial<Item>) => {
     const updated = await db.items.update(itemId, updatedItem);
-    if (updated) console.log(`The list was updated successfully`);
+    if (updated) console.log(`The item was updated successfully`);
     else
       console.log(
         `Nothing was updated - there was no list with the id: ${itemId}`
@@ -60,37 +68,7 @@ const databaseAPI = {
     return updated;
   },
   // ================================================ //
-
-  // Category Operations
-
-  // Add new category
-  addCategory: async (category: Category) => {
-    return await db.categories.add(category);
-  },
-
-  // Delete a specific category
-  deleteCategory: async (categoryId: string) => {
-    return await db.categories.delete(categoryId);
-  },
-
-  // Retrieve a category
-  getCategory: async (categoryId: string) => {
-    return await db.categories.get(categoryId);
-  },
-  // Retrieve all categories (use with useLiveQuery)
-  getAllCategories: async () => {
-    return await db.categories.toArray();
-  },
-
-  // Update a specific category
-  updateCategory: async (
-    categoryId: string,
-    updatedCategory: Partial<Category>
-  ) => {
-    return await db.categories.update(categoryId, updatedCategory);
-  },
-
-  // ================================================ //
 };
 
 export { databaseAPI };
+export type { List, Item };

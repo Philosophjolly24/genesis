@@ -1,11 +1,13 @@
 "use client";
-
+// Imports
 import Image from "next/image";
-import { databaseAPI } from "../../(database)/api/api";
+import { databaseAPI } from "../../database/api/api";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useRef, useState } from "react";
-import ListIconPicker from "../../(components)/ListIcon";
+import ListIconPicker from "../../components/ListIcon";
 import Link from "next/link";
+import ProgressBar from "../../components/ProgressBar";
+import CheckedItemCount from "../../components/CheckedItemCount";
 
 export default function ViewAllLists() {
   const lists = useLiveQuery(() => databaseAPI.getAllLists()) || [];
@@ -20,11 +22,14 @@ export default function ViewAllLists() {
         <>
           <Image
             width={76}
-            height={376}
+            height={76}
             src={"no-lists.svg"}
             alt="No-lists"
+            className="object-cover max-w-90 max-h-90 w-[80%] h-[80%] m-auto pt-5"
           ></Image>
-          <p>Created lists will appear here</p>
+          <p className="m-auto w-full text-center text-lg">
+            created lists will appear here
+          </p>
         </>
       ) : (
         <ul>
@@ -39,15 +44,12 @@ export default function ViewAllLists() {
                   ListEmojiIcon={list.emoji ?? "🛒"}
                   ref={popoverRef}
                 ></ListIconPicker>
-                <Link href={`../../${list.id}`} className="grow">
-                  <p
-                    className="text-lg font-nunito-sans grow ml-3 mr-3 text-center"
-                    ref={popoverRef}
-                  >
+                <Link href={`../../${list.id}`} className="grow max-w-[50%]">
+                  <p className=" block text-lg font-nunito-sans grow ml-3 mr-3 text-left max-h-7 w-fill truncate">
                     {list.name}
                   </p>
                 </Link>
-                <p className="p-3">0/2</p>
+                <CheckedItemCount listID={list.id}></CheckedItemCount>
                 <Image
                   width={16}
                   height={16}
@@ -56,7 +58,8 @@ export default function ViewAllLists() {
                   className="mr-3"
                 ></Image>
               </div>
-              <div className="h-1 bg-grey w-[90%] m-auto mb-2 block rounded"></div>
+              {/* // TODO: progressbar comes here */}
+              <ProgressBar listID={list.id}></ProgressBar>
             </li>
           ))}
         </ul>
